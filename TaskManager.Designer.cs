@@ -51,6 +51,7 @@
             this.optionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button_Screenshot = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ProcessStatus)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -61,9 +62,9 @@
             // pictureBox_ProcessStatus
             // 
             this.pictureBox_ProcessStatus.BackColor = System.Drawing.Color.Red;
-            this.pictureBox_ProcessStatus.Location = new System.Drawing.Point(152, 223);
+            this.pictureBox_ProcessStatus.Location = new System.Drawing.Point(125, 252);
             this.pictureBox_ProcessStatus.Name = "pictureBox_ProcessStatus";
-            this.pictureBox_ProcessStatus.Size = new System.Drawing.Size(52, 52);
+            this.pictureBox_ProcessStatus.Size = new System.Drawing.Size(79, 23);
             this.pictureBox_ProcessStatus.TabIndex = 0;
             this.pictureBox_ProcessStatus.TabStop = false;
             // 
@@ -71,7 +72,7 @@
             // 
             this.button_Refresh.Location = new System.Drawing.Point(34, 252);
             this.button_Refresh.Name = "button_Refresh";
-            this.button_Refresh.Size = new System.Drawing.Size(85, 23);
+            this.button_Refresh.Size = new System.Drawing.Size(79, 23);
             this.button_Refresh.TabIndex = 1;
             this.button_Refresh.Text = "새로고침";
             this.button_Refresh.UseVisualStyleBackColor = true;
@@ -137,7 +138,7 @@
             // 
             this.button_Hide.Location = new System.Drawing.Point(34, 223);
             this.button_Hide.Name = "button_Hide";
-            this.button_Hide.Size = new System.Drawing.Size(85, 23);
+            this.button_Hide.Size = new System.Drawing.Size(79, 23);
             this.button_Hide.TabIndex = 4;
             this.button_Hide.Text = "클라 숨기기";
             this.button_Hide.UseVisualStyleBackColor = true;
@@ -227,22 +228,33 @@
             // settingToolStripMenuItem
             // 
             this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            this.settingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.settingToolStripMenuItem.Text = "설정";
             this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
             // 
             // infoToolStripMenuItem
             // 
             this.infoToolStripMenuItem.Name = "infoToolStripMenuItem";
-            this.infoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.infoToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.infoToolStripMenuItem.Text = "정보";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
+            // 
+            // button_Screenshot
+            // 
+            this.button_Screenshot.Location = new System.Drawing.Point(125, 223);
+            this.button_Screenshot.Name = "button_Screenshot";
+            this.button_Screenshot.Size = new System.Drawing.Size(79, 23);
+            this.button_Screenshot.TabIndex = 8;
+            this.button_Screenshot.Text = "스크린샷";
+            this.button_Screenshot.UseVisualStyleBackColor = true;
+            this.button_Screenshot.Click += new System.EventHandler(this.button_Screenshot_Click);
             // 
             // TaskManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(314, 291);
+            this.Controls.Add(this.button_Screenshot);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.button_mute);
             this.Controls.Add(this.trackBar_sound);
@@ -289,6 +301,7 @@
         private System.Windows.Forms.ToolStripMenuItem optionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
+        private System.Windows.Forms.Button button_Screenshot;
     }
 }
 

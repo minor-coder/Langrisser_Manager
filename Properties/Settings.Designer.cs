@@ -130,5 +130,41 @@ namespace TaskManager.Properties {
                 this["MuteKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int ScreenshotModifier {
+            get {
+                return ((int)(this["ScreenshotModifier"]));
+            }
+            set {
+                this["ScreenshotModifier"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("83")]
+        public int ScreenshotKey {
+            get {
+                return ((int)(this["ScreenshotKey"]));
+            }
+            set {
+                this["ScreenshotKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool isRefreshMute {
+            get {
+                return ((bool)(this["isRefreshMute"]));
+            }
+            set {
+                this["isRefreshMute"] = value;
+            }
+        }
     }
 }

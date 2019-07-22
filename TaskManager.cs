@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 namespace TaskManager
 {
@@ -21,7 +22,7 @@ namespace TaskManager
 
         public List<Image> _ListWeapon = null;
 
-        [DllImport("user32")]
+        [DllImport("user32.dll")]
         public static extern int ShowWindow(int hwnd, int nCmdShow);
         private const int SW_HIDE = 0;
         private const int SW_SHOW = 5;
@@ -32,10 +33,26 @@ namespace TaskManager
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+        [DllImport("user32.dll")]
+        private static extern int SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rectangle rect);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
+
+        [DllImport("user32.dll")]
+        static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
         const int BOSSKEY_ID = 0;
         const int VOLUMEUPKEY_ID = 1;
         const int VOLUMEDOWNKEY_ID = 2;
         const int MUTEKEY_ID = 3;
+        const int SCREENSHOT_ID = 4;
 
         const int WM_HOTKEY = 0x0312;
 
@@ -53,7 +70,7 @@ namespace TaskManager
                 }
 
                 // Volume Up
-                if ((KeyModifiers)(Properties.Settings.Default.VolumeUpModifiers) == modifier && (Keys)(Properties.Settings.Default.VolumeUpKey) == key)
+                else if ((KeyModifiers)(Properties.Settings.Default.VolumeUpModifiers) == modifier && (Keys)(Properties.Settings.Default.VolumeUpKey) == key)
                 {
                     if (100 - 5 < trackBar_sound.Value)
                         trackBar_sound.Value = 100;
@@ -65,7 +82,7 @@ namespace TaskManager
                 }
 
                 // Volume Down
-                if ((KeyModifiers)(Properties.Settings.Default.VolumeDownModifiers) == modifier && (Keys)(Properties.Settings.Default.VolumeDownKey) == key)
+                else if ((KeyModifiers)(Properties.Settings.Default.VolumeDownModifiers) == modifier && (Keys)(Properties.Settings.Default.VolumeDownKey) == key)
                 {
                     if (5 > trackBar_sound.Value)
                         trackBar_sound.Value = 0;
@@ -77,7 +94,7 @@ namespace TaskManager
                 }
 
                 // MuteKey
-                if ((KeyModifiers)(Properties.Settings.Default.MuteKeyModifiers) == modifier && (Keys)(Properties.Settings.Default.MuteKey) == key)
+                else if ((KeyModifiers)(Properties.Settings.Default.MuteKeyModifiers) == modifier && (Keys)(Properties.Settings.Default.MuteKey) == key)
                 {
                     if (true == _isMute)
                     {
@@ -93,6 +110,12 @@ namespace TaskManager
                         if (null != _Process)
                             VolumeMixer.SetApplicationMute(_Process.Id, true);
                     }
+                }
+
+                // Screenshot
+                else if ((KeyModifiers)(Properties.Settings.Default.ScreenshotModifier) == modifier && (Keys)(Properties.Settings.Default.ScreenshotKey) == key)
+                {
+                    Screenshot();
                 }
             }
 
@@ -116,11 +139,7 @@ namespace TaskManager
 
             notifyIcon.ShowBalloonTip(2000);
 
-            if (SearchProcess())
-            {
-                VolumeMixer.SetApplicationMute(_Process.Id, true);
-                VolumeMixer.SetApplicationVolume(_Process.Id, 0f);
-            }
+            SearchProcess();
 
             _ListWeapon = new List<Image>();
             InitWeaponList();
@@ -201,6 +220,17 @@ namespace TaskManager
             _Process = processList[0];
             notifyIcon.Icon = Properties.Resources.Green;
             pictureBox_ProcessStatus.BackColor = Color.Lime;
+
+            if (Properties.Settings.Default.isRefreshMute)
+            {
+                trackBar_sound.Value = 0;
+                button_mute.Image = Properties.Resources.Mute;
+                _isMute = true;
+
+                VolumeMixer.SetApplicationMute(_Process.Id, true);
+                VolumeMixer.SetApplicationVolume(_Process.Id, 0f);
+            }
+
             return true;
         }
 
@@ -299,6 +329,7 @@ namespace TaskManager
             UnregisterHotKey(this.Handle, VOLUMEUPKEY_ID);
             UnregisterHotKey(this.Handle, VOLUMEDOWNKEY_ID);
             UnregisterHotKey(this.Handle, MUTEKEY_ID);
+            UnregisterHotKey(this.Handle, SCREENSHOT_ID);
         }
 
         public void HotKeyRegister()
@@ -319,6 +350,9 @@ namespace TaskManager
             key = (Keys)(Properties.Settings.Default.MuteKey);
             RegisterHotKey(this.Handle, MUTEKEY_ID, modifier, key);
 
+            modifier = (KeyModifiers)(Properties.Settings.Default.ScreenshotModifier);
+            key = (Keys)(Properties.Settings.Default.ScreenshotKey);
+            RegisterHotKey(this.Handle, SCREENSHOT_ID, modifier, key);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -381,6 +415,47 @@ namespace TaskManager
         {
             Info info = new Info();
             info.ShowDialog();
+        }
+
+        private void Screenshot()
+        {
+            if (null == _Process)
+                return;
+
+            if (true == _isHide)
+                return;
+
+            Rectangle rect = Rectangle.Empty;
+
+            Graphics gfxWin = Graphics.FromHwnd(_Process.MainWindowHandle);
+            rect = Rectangle.Round(gfxWin.VisibleClipBounds);
+
+            Bitmap bmp = new Bitmap(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Graphics gfxBmp = Graphics.FromImage(bmp);
+            IntPtr hdcBitmap = gfxBmp.GetHdc();
+            bool succeeded = PrintWindow(_Process.MainWindowHandle, hdcBitmap, 3);
+
+            gfxBmp.ReleaseHdc(hdcBitmap);
+            if(!succeeded)
+            {
+                gfxBmp.FillRectangle(new SolidBrush(Color.Gray), new Rectangle(System.Drawing.Point.Empty, bmp.Size));
+            }
+            IntPtr hRgn = CreateRectRgn(0, 0, 0, 0);
+            GetWindowRgn(_Process.MainWindowHandle, hRgn);
+            Region region = Region.FromHrgn(hRgn);
+            if(!region.IsEmpty(gfxBmp))
+            {
+                gfxBmp.ExcludeClip(region);
+                gfxBmp.Clear(Color.Transparent);
+            }
+            
+            gfxBmp.Dispose();
+            bmp.Save(Application.StartupPath + "\\Langrisser" + DateTime.Now.ToString("_MM-dd_hh-mm-ss") + ".png", System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        private void button_Screenshot_Click(object sender, EventArgs e)
+        {
+            Screenshot();
         }
     }
 }

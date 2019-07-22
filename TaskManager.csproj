@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Leon.ico</ApplicationIcon>
+    <ApplicationIcon>lang.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -41,6 +41,7 @@
   <PropertyGroup>
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -241,6 +242,8 @@
   <ItemGroup>
     <Content Include="armor.ico" />
     <None Include="bin\Debug\lang.png" />
+    <None Include="bin\Debug\lang.ico" />
+    <Content Include="lang.ico" />
     <Content Include="Leon.ico" />
     <None Include="bin\Debug\Leon.ico" />
   </ItemGroup>

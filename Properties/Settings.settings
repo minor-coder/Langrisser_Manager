@@ -29,5 +29,14 @@
     <Setting Name="MuteKey" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">77</Value>
     </Setting>
+    <Setting Name="ScreenshotModifier" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="ScreenshotKey" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">83</Value>
+    </Setting>
+    <Setting Name="isRefreshMute" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

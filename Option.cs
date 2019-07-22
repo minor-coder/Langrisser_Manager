@@ -18,6 +18,7 @@ namespace TaskManager
         public HotKey _VolumeUp;
         public HotKey _VolumeDown;
         public HotKey _MuteKey;
+        public HotKey _ScreenshotKey;
 
         public Option()
         {
@@ -32,6 +33,7 @@ namespace TaskManager
             _tm = tm;
 
             checkBox_Tooltip.Checked = Properties.Settings.Default.isBalloon;
+            checkBox_RefreshMute.Checked = Properties.Settings.Default.isRefreshMute;
 
             _BossKey.modifiers = ModifiersCalcRerv(Properties.Settings.Default.BossKeyModifiers);
             _BossKey.key = Properties.Settings.Default.BossKey;
@@ -48,11 +50,16 @@ namespace TaskManager
             _MuteKey.modifiers = ModifiersCalcRerv(Properties.Settings.Default.MuteKeyModifiers);
             _MuteKey.key = Properties.Settings.Default.MuteKey;
             ShowHotKey(textBox_MuteKey, _MuteKey);
+
+            _ScreenshotKey.modifiers = ModifiersCalcRerv(Properties.Settings.Default.ScreenshotModifier);
+            _ScreenshotKey.key = Properties.Settings.Default.ScreenshotKey;
+            ShowHotKey(textBox_Screenshot, _ScreenshotKey);
         }
 
         private void button_Save_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.isBalloon = checkBox_Tooltip.Checked;
+            Properties.Settings.Default.isRefreshMute = checkBox_RefreshMute.Checked;
 
             Properties.Settings.Default.BossKeyModifiers = ModifiersCalc(_BossKey);
             Properties.Settings.Default.BossKey = _BossKey.key;
@@ -65,6 +72,9 @@ namespace TaskManager
 
             Properties.Settings.Default.MuteKeyModifiers = ModifiersCalc(_MuteKey);
             Properties.Settings.Default.MuteKey = _MuteKey.key;
+
+            Properties.Settings.Default.ScreenshotModifier = ModifiersCalc(_ScreenshotKey);
+            Properties.Settings.Default.ScreenshotKey = _ScreenshotKey.key;
 
             Properties.Settings.Default.Save();
 
@@ -123,6 +133,11 @@ namespace TaskManager
         private void textBox_MuteKey_KeyUp(object sender, KeyEventArgs e)
         {
             ShowHotKey(sender, e, ref _MuteKey);
+        }
+
+        private void textBox_Screenshot_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowHotKey(sender, e, ref _ScreenshotKey);
         }
 
         private void ShowHotKey(object sender, HotKey hotKey)

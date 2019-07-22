@@ -38,15 +38,18 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox_HotKey = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox_Screenshot = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox_MuteKey = new System.Windows.Forms.TextBox();
+            this.checkBox_RefreshMute = new System.Windows.Forms.CheckBox();
             this.groupBox_HotKey.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_Save
             // 
             this.button_Save.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button_Save.Location = new System.Drawing.Point(49, 196);
+            this.button_Save.Location = new System.Drawing.Point(50, 222);
             this.button_Save.Name = "button_Save";
             this.button_Save.Size = new System.Drawing.Size(75, 23);
             this.button_Save.TabIndex = 1;
@@ -57,7 +60,7 @@
             // checkBox_Tooltip
             // 
             this.checkBox_Tooltip.AutoSize = true;
-            this.checkBox_Tooltip.Location = new System.Drawing.Point(84, 163);
+            this.checkBox_Tooltip.Location = new System.Drawing.Point(152, 188);
             this.checkBox_Tooltip.Name = "checkBox_Tooltip";
             this.checkBox_Tooltip.Size = new System.Drawing.Size(116, 16);
             this.checkBox_Tooltip.TabIndex = 2;
@@ -124,7 +127,7 @@
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(156, 196);
+            this.button1.Location = new System.Drawing.Point(157, 222);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 9;
@@ -134,6 +137,8 @@
             // 
             // groupBox_HotKey
             // 
+            this.groupBox_HotKey.Controls.Add(this.label5);
+            this.groupBox_HotKey.Controls.Add(this.textBox_Screenshot);
             this.groupBox_HotKey.Controls.Add(this.label4);
             this.groupBox_HotKey.Controls.Add(this.textBox_MuteKey);
             this.groupBox_HotKey.Controls.Add(this.textBox_VolumeUp);
@@ -144,10 +149,29 @@
             this.groupBox_HotKey.Controls.Add(this.label1);
             this.groupBox_HotKey.Location = new System.Drawing.Point(12, 12);
             this.groupBox_HotKey.Name = "groupBox_HotKey";
-            this.groupBox_HotKey.Size = new System.Drawing.Size(256, 133);
+            this.groupBox_HotKey.Size = new System.Drawing.Size(256, 160);
             this.groupBox_HotKey.TabIndex = 10;
             this.groupBox_HotKey.TabStop = false;
             this.groupBox_HotKey.Text = "단축키";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 128);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(95, 12);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Screenshot Key";
+            // 
+            // textBox_Screenshot
+            // 
+            this.textBox_Screenshot.Location = new System.Drawing.Point(107, 125);
+            this.textBox_Screenshot.Name = "textBox_Screenshot";
+            this.textBox_Screenshot.ReadOnly = true;
+            this.textBox_Screenshot.Size = new System.Drawing.Size(133, 21);
+            this.textBox_Screenshot.TabIndex = 11;
+            this.textBox_Screenshot.Text = "Ctrl + Shift + S";
+            this.textBox_Screenshot.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Screenshot_KeyUp);
             // 
             // label4
             // 
@@ -168,12 +192,23 @@
             this.textBox_MuteKey.Text = "Ctrl + M";
             this.textBox_MuteKey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_MuteKey_KeyUp);
             // 
+            // checkBox_RefreshMute
+            // 
+            this.checkBox_RefreshMute.AutoSize = true;
+            this.checkBox_RefreshMute.Location = new System.Drawing.Point(20, 188);
+            this.checkBox_RefreshMute.Name = "checkBox_RefreshMute";
+            this.checkBox_RefreshMute.Size = new System.Drawing.Size(124, 16);
+            this.checkBox_RefreshMute.TabIndex = 11;
+            this.checkBox_RefreshMute.Text = "새로고침시 음소거";
+            this.checkBox_RefreshMute.UseVisualStyleBackColor = true;
+            // 
             // Option
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 229);
+            this.ClientSize = new System.Drawing.Size(282, 256);
             this.ControlBox = false;
+            this.Controls.Add(this.checkBox_RefreshMute);
             this.Controls.Add(this.groupBox_HotKey);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBox_Tooltip);
@@ -200,5 +235,8 @@
         private System.Windows.Forms.GroupBox groupBox_HotKey;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox_MuteKey;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox_Screenshot;
+        private System.Windows.Forms.CheckBox checkBox_RefreshMute;
     }
 }
