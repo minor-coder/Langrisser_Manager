@@ -16,57 +16,127 @@ namespace TaskManager
 {
     public partial class TaskManager : Form
     {
+        [StructLayout(LayoutKind.Sequential)]
+        public class POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public class MouseHookStruct
+        {
+            public POINT point;
+            public int hwnd;
+            public int wHitTestCode;
+            public int dwExtraInfo;
+        }
+
         public Process _Process = null;
-        public bool _isHide = false;
         public bool _isMute = true;
+        public bool _isSkillPush = false;
+        public bool _isUsingChat = false;
+
+        public static TaskManager _this;
+        private static Win32.HookProc MouseHookProcedure;
 
         public List<Image> _ListWeapon = null;
+        
+        public UILocation _LocSkill1 = new UILocation(312, 90, UILocation.Direction.RB);
+        public UILocation _LocSkill2 = new UILocation(222, 218, UILocation.Direction.RB);
+        public UILocation _LocSkill3 = new UILocation(90, 302, UILocation.Direction.RB);
+        public UILocation _LocOK = new UILocation(105, 105, UILocation.Direction.RB);
+        public UILocation _LocCancel = new UILocation(267, 105, UILocation.Direction.RB);
+        public UILocation _LocWait = new UILocation(105, 103, UILocation.Direction.RB);
+        public UILocation _LocChatLT = new UILocation(-25, 271, UILocation.Direction.LB);
+        public UILocation _LocChatRB = new UILocation(-99, 197, UILocation.Direction.LB);
+        public UILocation _LocChatXLT = new UILocation(-775, 0, UILocation.Direction.LT);
+        public UILocation _LocChatXRB = new UILocation(-848, -73, UILocation.Direction.LT);
 
-        [DllImport("user32.dll")]
-        public static extern int ShowWindow(int hwnd, int nCmdShow);
-        private const int SW_HIDE = 0;
-        private const int SW_SHOW = 5;
+        private const int BOSSKEY_ID = 0;
+        private const int VOLUMEUPKEY_ID = 1;
+        private const int VOLUMEDOWNKEY_ID = 2;
+        private const int MUTEKEY_ID = 3;
+        private const int SCREENSHOT_ID = 4;
+        
+        private const int SKILL1_ID = 5;
+        private const int SKILL2_ID = 6;
+        private const int SKILL3_ID = 7;
+        private const int OK_ID = 8;
+        private const int CANCEL_ID = 9;
+        private const int WAIT_ID = 10;
+        private const int INGAMESHORTCUT_ID = 11;
 
-        [DllImport("user32.dll")]
-        public static extern bool RegisterHotKey(IntPtr hWnd, int id, KeyModifiers fsModifiers, Keys vk);
+        private const int ESC_ID = 12;
 
-        [DllImport("user32.dll")]
-        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        private const int MAX_CLIENT_SIZE_X = 1600;
+        private const int MAX_CLIENT_SIZE_Y = 900;
 
-        [DllImport("user32.dll")]
-        private static extern int SetForegroundWindow(IntPtr hWnd);
+        private static int c_hook = 0;
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rectangle rect);
+        private const float MAX_CLIENT_ASPECT_RATIO = 1600f / 900f;
 
-        [DllImport("user32.dll")]
-        public static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
+        public TaskManager()
+        {
+            InitializeComponent();
+            InitForm();
+        }
 
-        [DllImport("user32.dll")]
-        static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+        public void InitForm()
+        {
+            _this = this;
+            this.Icon = Properties.Resources.taskmanager;
 
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+            this.MaximizeBox = false;
+            this.WindowState = FormWindowState.Minimized;
+            this.ShowInTaskbar = false;
+            notifyIcon.ContextMenuStrip = contextMenuStrip;
 
-        const int BOSSKEY_ID = 0;
-        const int VOLUMEUPKEY_ID = 1;
-        const int VOLUMEDOWNKEY_ID = 2;
-        const int MUTEKEY_ID = 3;
-        const int SCREENSHOT_ID = 4;
+            notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+            notifyIcon.BalloonTipTitle = "작업 관리자";
+            notifyIcon.BalloonTipText = "프로그램이 실행 중 입니다.";
+            notifyIcon.ShowBalloonTip(2000);
 
-        const int WM_HOTKEY = 0x0312;
+            SearchProcess();
 
+            _ListWeapon = new List<Image>();
+
+            HotKeyRegister();
+        }
+
+        private static DateTime Delay(int MS)
+        {
+            DateTime ThisMoment = DateTime.Now;
+            TimeSpan duration = new TimeSpan(0, 0, 0, 0, MS);
+            DateTime AfterWards = ThisMoment.Add(duration);
+
+            while (AfterWards >= ThisMoment)
+            {
+                System.Windows.Forms.Application.DoEvents();
+                ThisMoment = DateTime.Now;
+            }
+
+            return DateTime.Now;
+        }
+
+        // Windows Message Catcher
         protected override void WndProc(ref Message message)
         {
-            if (message.Msg == WM_HOTKEY)
+            if (message.Msg == Win32.WM_HOTKEY)
             {
                 Keys key = (Keys)(((int)message.LParam >> 16) & 0xFFFF);
                 KeyModifiers modifier = (KeyModifiers)((int)message.LParam & 0xFFFF);
-
+                
                 // BossKey
                 if ((KeyModifiers)(Properties.Settings.Default.BossKeyModifiers) == modifier && (Keys)(Properties.Settings.Default.BossKey) == key)
                 {
-                    HideClient();
+                    if(null != _Process)
+                    {
+                        if (true == checkBox_Hide.Checked)
+                            checkBox_Hide.Checked = false;
+                        else
+                            checkBox_Hide.Checked = true;
+                    }
                 }
 
                 // Volume Up
@@ -113,125 +183,403 @@ namespace TaskManager
                 }
 
                 // Screenshot
-                else if ((KeyModifiers)(Properties.Settings.Default.ScreenshotModifier) == modifier && (Keys)(Properties.Settings.Default.ScreenshotKey) == key)
+                else if ((KeyModifiers)(Properties.Settings.Default.ScreenshotModifiers) == modifier && (Keys)(Properties.Settings.Default.ScreenshotKey) == key)
                 {
                     Screenshot();
+                }
+
+                // IngameShortcut
+                else if ((KeyModifiers)(Properties.Settings.Default.IngameShortcutModifiers) == modifier && (Keys)(Properties.Settings.Default.IngameShortcutKey) == key)
+                {
+                    if(null != _Process)
+                    {
+                        if (true == checkBox_IngameShortcut.Checked)
+                            checkBox_IngameShortcut.Checked = false;
+                        else
+                            checkBox_IngameShortcut.Checked = true;
+                    }
+                }
+
+                // Skill1
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.Skill1Key) == key)
+                {
+                    IngameHotKey(_LocSkill1);
+                    _isSkillPush = true;
+                }
+
+                // Skill2
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.Skill2Key) == key)
+                {
+                    IngameHotKey(_LocSkill2);
+                    _isSkillPush = true;
+                }
+
+                // Skill3
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.Skill3Key) == key)
+                {
+                    IngameHotKey(_LocSkill3);
+                    _isSkillPush = true;
+                }
+
+                // OK
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.OKKey) == key)
+                {
+                    IngameHotKey(_LocOK);
+                }
+
+                // CANCEL
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.CancelKey) == key)
+                {
+                    IngameHotKey(_LocCancel);
+                }
+
+                // WAIT
+                else if (KeyModifiers.None == modifier && (Keys)(Properties.Settings.Default.WaitKey) == key)
+                {
+                    IngameHotKey(_LocWait);
+                }
+
+                // ESC
+                else if (KeyModifiers.None == modifier && Keys.Escape == key)
+                {
+                    if (null != _Process)
+                    {
+                        if(true == _isUsingChat)
+                        {
+                            _isUsingChat = false;
+
+                            if (true == Properties.Settings.Default.isBalloon)
+                            {
+                                _this.notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                                _this.notifyIcon.BalloonTipTitle = "작업 관리자";
+                                _this.notifyIcon.BalloonTipText = "인게임 채팅모드 종료.";
+                                _this.notifyIcon.ShowBalloonTip(2000);
+                            }
+
+                            _this.IngameShortCutKeyRegister();
+                            Win32.UnregisterHotKey(_this.Handle, ESC_ID);
+                        }
+                    }
+
+                    int info = 0;
+                    Win32.keybd_event(Win32.VK_ESCAPE, 0, Win32.KE_DOWN, ref info);
+                    Win32.keybd_event(Win32.VK_ESCAPE, 0, Win32.KE_UP, ref info);
                 }
             }
 
             base.WndProc(ref message);
         }
 
-        public TaskManager()
+
+        // Win32 Hooking
+        // ===================================================================================
+
+        public static void HookRegister()
         {
-            InitializeComponent();
-            InitForm();
-        }
-
-        public void InitForm()
-        {
-            this.Icon = Properties.Resources.taskmanager;
-
-            this.MaximizeBox = false;
-            this.WindowState = FormWindowState.Minimized;
-            this.ShowInTaskbar = false;
-            notifyIcon.ContextMenuStrip = contextMenuStrip;
-
-            notifyIcon.ShowBalloonTip(2000);
-
-            SearchProcess();
-
-            _ListWeapon = new List<Image>();
-            InitWeaponList();
-
-            RandomWeapon();
-
-            HotKeyRegister();
-        }
-
-        public void RandomWeapon()
-        {
-            Random r = new Random();
-            int weapon = r.Next(0, 33);
-
-            pictureBox.Image = _ListWeapon[weapon];
-        }
-
-        public void InitWeaponList()
-        {
-            _ListWeapon.Add(Properties.Resources.w1);
-            _ListWeapon.Add(Properties.Resources.w2);
-            _ListWeapon.Add(Properties.Resources.w3);
-            _ListWeapon.Add(Properties.Resources.w4);
-            _ListWeapon.Add(Properties.Resources.w5);
-            _ListWeapon.Add(Properties.Resources.w6);
-            _ListWeapon.Add(Properties.Resources.w7);
-            _ListWeapon.Add(Properties.Resources.w8);
-            _ListWeapon.Add(Properties.Resources.w9);
-            _ListWeapon.Add(Properties.Resources.w10);
-            _ListWeapon.Add(Properties.Resources.w11);
-            _ListWeapon.Add(Properties.Resources.w12);
-            _ListWeapon.Add(Properties.Resources.w13);
-            _ListWeapon.Add(Properties.Resources.w14);
-            _ListWeapon.Add(Properties.Resources.w15);
-            _ListWeapon.Add(Properties.Resources.w16);
-            _ListWeapon.Add(Properties.Resources.w17);
-            _ListWeapon.Add(Properties.Resources.w18);
-            _ListWeapon.Add(Properties.Resources.w19);
-            _ListWeapon.Add(Properties.Resources.w20);
-            _ListWeapon.Add(Properties.Resources.w21);
-            _ListWeapon.Add(Properties.Resources.w22);
-            _ListWeapon.Add(Properties.Resources.w23);
-            _ListWeapon.Add(Properties.Resources.w24);
-            _ListWeapon.Add(Properties.Resources.w25);
-            _ListWeapon.Add(Properties.Resources.w26);
-            _ListWeapon.Add(Properties.Resources.w27);
-            _ListWeapon.Add(Properties.Resources.w28);
-            _ListWeapon.Add(Properties.Resources.w29);
-            _ListWeapon.Add(Properties.Resources.w30);
-            _ListWeapon.Add(Properties.Resources.w31);
-            _ListWeapon.Add(Properties.Resources.w32);
-            _ListWeapon.Add(Properties.Resources.w33);
-        }
-
-        public bool SearchProcess()
-        {
-            Process[] processList = Process.GetProcessesByName("Langrisser");
-
-            if (1 > processList.Length || 1 < processList.Length)
+            if(c_hook == 0)
             {
-                notifyIcon.Icon = Properties.Resources.Red;
-                pictureBox_ProcessStatus.BackColor = Color.Red;
-                if (null != _Process)
+                MouseHookProcedure = new Win32.HookProc(HookCallBack);
+                c_hook = Win32.SetWindowsHookEx(Win32.WH_MOUSE_LL, MouseHookProcedure, IntPtr.Zero, 0);
+            }
+        }
+
+        private static void HookUnregister()
+        {
+            Win32.UnhookWindowsHookEx(c_hook);
+            c_hook = 0;
+            MouseHookProcedure = null;
+        }
+
+        public static int HookCallBack(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if(null == _this._Process)
+                return Win32.CallNextHookEx(c_hook, nCode, wParam, lParam);
+
+            if (nCode >= 0 && MouseMessages.WM_LBUTTONUP == (MouseMessages)wParam)
+            {
+                MouseHookStruct mouseInput = (MouseHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseHookStruct));
+
+                if(false == _this._isUsingChat)
                 {
-                    _Process.Dispose();
-                    _Process = null;
+                    Point LT = _this.PointToResponsiveWindow(_this._LocChatLT);
+                    Point RB = _this.PointToResponsiveWindow(_this._LocChatRB);
+                    Rectangle chatRect = new Rectangle(LT.X, LT.Y, RB.X - LT.X, RB.Y - LT.Y);
+
+                    //Point center = _this.PointToResponsiveWindow(_this._LocSkill1);
+                    //Rectangle skill1Rect = new Rectangle(center.X - 77, center.Y - 77, 155, 155);
+
+                    //center = _this.PointToResponsiveWindow(_this._LocSkill2);
+                    //Rectangle skill2Rect = new Rectangle(center.X - 77, center.Y - 77, 155, 155);
+
+                    //center = _this.PointToResponsiveWindow(_this._LocSkill3);
+                    //Rectangle skill3Rect = new Rectangle(center.X - 77, center.Y - 77, 155, 155);
+
+                    if (chatRect.Contains(mouseInput.point.x, mouseInput.point.y))
+                    {
+                        _this._isUsingChat = true;
+
+                        if(true == Properties.Settings.Default.isBalloon)
+                        {
+                            _this.notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                            _this.notifyIcon.BalloonTipTitle = "작업 관리자";
+                            _this.notifyIcon.BalloonTipText = "인게임 채팅모드 시작.";
+                            _this.notifyIcon.ShowBalloonTip(2000);
+                        }
+
+                        Win32.RegisterHotKey(_this.Handle, ESC_ID, KeyModifiers.None, Keys.Escape);
+
+                        _this.IngameShortCutKeyUnregister();
+                    }
+                }
+                else
+                {
+                    Point LT = _this.PointToResponsiveWindow(_this._LocChatXLT);
+                    Point RB = _this.PointToResponsiveWindow(_this._LocChatXRB);
+                    Rectangle chatXRect = new Rectangle(LT.X, LT.Y, RB.X - LT.X, RB.Y - LT.Y);
+
+                    if (chatXRect.Contains(mouseInput.point.x, mouseInput.point.y))
+                    {
+                        _this._isUsingChat = false;
+
+                        if (true == Properties.Settings.Default.isBalloon)
+                        {
+                            _this.notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                            _this.notifyIcon.BalloonTipTitle = "작업 관리자";
+                            _this.notifyIcon.BalloonTipText = "인게임 채팅모드 종료.";
+                            _this.notifyIcon.ShowBalloonTip(2000);
+                        }
+
+                        Win32.UnregisterHotKey(_this.Handle, ESC_ID);
+
+                        _this.IngameShortCutKeyRegister();
+                    }
+                }
+            }
+
+            return Win32.CallNextHookEx(c_hook, nCode, wParam, lParam);
+        }
+
+        // ===================================================================================
+
+
+        // HotKey
+        // ===================================================================================
+
+        public void HotKeyUnregister()
+        {
+            Win32.UnregisterHotKey(this.Handle, BOSSKEY_ID);
+            Win32.UnregisterHotKey(this.Handle, VOLUMEUPKEY_ID);
+            Win32.UnregisterHotKey(this.Handle, VOLUMEDOWNKEY_ID);
+            Win32.UnregisterHotKey(this.Handle, MUTEKEY_ID);
+            Win32.UnregisterHotKey(this.Handle, SCREENSHOT_ID);
+            Win32.UnregisterHotKey(this.Handle, INGAMESHORTCUT_ID);
+        }
+
+        public void HotKeyRegister()
+        {
+            KeyModifiers modifier = (KeyModifiers)(Properties.Settings.Default.BossKeyModifiers);
+            Keys key = (Keys)(Properties.Settings.Default.BossKey);
+            Win32.RegisterHotKey(this.Handle, BOSSKEY_ID, modifier, key);
+
+            modifier = (KeyModifiers)(Properties.Settings.Default.VolumeUpModifiers);
+            key = (Keys)(Properties.Settings.Default.VolumeUpKey);
+            Win32.RegisterHotKey(this.Handle, VOLUMEUPKEY_ID, modifier, key);
+
+            modifier = (KeyModifiers)(Properties.Settings.Default.VolumeDownModifiers);
+            key = (Keys)(Properties.Settings.Default.VolumeDownKey);
+            Win32.RegisterHotKey(this.Handle, VOLUMEDOWNKEY_ID, modifier, key);
+
+            modifier = (KeyModifiers)(Properties.Settings.Default.MuteKeyModifiers);
+            key = (Keys)(Properties.Settings.Default.MuteKey);
+            Win32.RegisterHotKey(this.Handle, MUTEKEY_ID, modifier, key);
+
+            modifier = (KeyModifiers)(Properties.Settings.Default.ScreenshotModifiers);
+            key = (Keys)(Properties.Settings.Default.ScreenshotKey);
+            Win32.RegisterHotKey(this.Handle, SCREENSHOT_ID, modifier, key);
+
+            modifier = (KeyModifiers)(Properties.Settings.Default.IngameShortcutModifiers);
+            key = (Keys)(Properties.Settings.Default.IngameShortcutKey);
+            Win32.RegisterHotKey(this.Handle, INGAMESHORTCUT_ID, modifier, key);
+        }
+
+        // ===================================================================================
+
+
+        // Ingame HotKey
+        // ===================================================================================
+
+        private Point PointToResponsiveWindow(UILocation uiLocation)
+        {
+            if (null == _Process)
+                return new Point(0, 0);
+
+            Rect rect;
+            Win32.GetClientRect(_Process.MainWindowHandle, out rect);
+
+            Point ptBasePoint;
+            switch (uiLocation.dir)
+            {
+                case UILocation.Direction.LT:
+                    ptBasePoint = new Point(rect.Left, rect.Top);
+                    break;
+                case UILocation.Direction.RT:
+                    ptBasePoint = new Point(rect.Right, rect.Top);
+                    break;
+                case UILocation.Direction.LB:
+                    ptBasePoint = new Point(rect.Left, rect.Bottom);
+                    break;
+                case UILocation.Direction.RB:
+                    ptBasePoint = new Point(rect.Right, rect.Bottom);
+                    break;
+            }
+
+            Win32.ClientToScreen(_Process.MainWindowHandle, out ptBasePoint);
+
+            float aspectRatio = (float)rect.Right / rect.Bottom;
+            float magnification;
+
+            if (MAX_CLIENT_ASPECT_RATIO < aspectRatio)
+            {
+                magnification = ((float)MAX_CLIENT_SIZE_X * rect.Bottom) / ((float)rect.Right * MAX_CLIENT_SIZE_Y) * ((float)rect.Right / MAX_CLIENT_SIZE_X);
+            }
+            else if (MAX_CLIENT_ASPECT_RATIO > aspectRatio)
+            {
+                magnification = ((float)rect.Right * MAX_CLIENT_SIZE_Y) / ((float)MAX_CLIENT_SIZE_X * rect.Bottom) * ((float)rect.Bottom / MAX_CLIENT_SIZE_Y);
+            }
+            else
+            {
+                magnification = 1f;
+            }
+
+            Point ScreenLocation = new Point((int)(uiLocation.x * magnification), (int)(uiLocation.y * magnification));
+
+            return new Point(ptBasePoint.X - ScreenLocation.X, ptBasePoint.Y - ScreenLocation.Y);
+        }
+
+        private void IngameHotKey(UILocation uiLocation)
+        {
+            if (null == _Process)
+                return;
+
+            if (true == checkBox_Hide.Checked)
+                return;
+
+            Point Result = PointToResponsiveWindow(uiLocation);
+
+            Mouseclick(Result);
+        }
+
+        public void IngameShortCutKeyUnregister()
+        {
+            Win32.UnregisterHotKey(this.Handle, SKILL1_ID);
+            Win32.UnregisterHotKey(this.Handle, SKILL2_ID);
+            Win32.UnregisterHotKey(this.Handle, SKILL3_ID);
+            //Win32.UnregisterHotKey(this.Handle, OK_ID);
+            Win32.UnregisterHotKey(this.Handle, CANCEL_ID);
+            Win32.UnregisterHotKey(this.Handle, WAIT_ID);
+        }
+
+        public void IngameShortCutKeyRegister()
+        {
+            KeyModifiers modifier = KeyModifiers.None;
+
+            Keys key = (Keys)(Properties.Settings.Default.Skill1Key);
+            Win32.RegisterHotKey(this.Handle, SKILL1_ID, modifier, key);
+
+            key = (Keys)(Properties.Settings.Default.Skill2Key);
+            Win32.RegisterHotKey(this.Handle, SKILL2_ID, modifier, key);
+
+            key = (Keys)(Properties.Settings.Default.Skill3Key);
+            Win32.RegisterHotKey(this.Handle, SKILL3_ID, modifier, key);
+
+            //key = (Keys)(Properties.Settings.Default.OKKey);
+            //Win32.RegisterHotKey(this.Handle, OK_ID, modifier, key);
+
+            key = (Keys)(Properties.Settings.Default.CancelKey);
+            Win32.RegisterHotKey(this.Handle, CANCEL_ID, modifier, key);
+
+            key = (Keys)(Properties.Settings.Default.WaitKey);
+            Win32.RegisterHotKey(this.Handle, WAIT_ID, modifier, key);
+        }
+
+        private void IngameShortcut()
+        {
+            if (true == checkBox_IngameShortcut.Checked)
+            {
+                if (true == Properties.Settings.Default.isBalloon)
+                {
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    notifyIcon.BalloonTipTitle = "작업 관리자";
+                    notifyIcon.BalloonTipText = "인게임 단축키 시작.";
+                    notifyIcon.ShowBalloonTip(2000);
                 }
 
-                return false;
+                IngameShortCutKeyRegister();
+                HookRegister();
             }
-
-            if (null != _Process)
+            else
             {
-                _Process.Dispose();
+                if (true == Properties.Settings.Default.isBalloon)
+                {
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    notifyIcon.BalloonTipTitle = "작업 관리자";
+                    notifyIcon.BalloonTipText = "인게임 단축키 종료.";
+                    notifyIcon.ShowBalloonTip(2000);
+                }
+
+                _isUsingChat = false;
+                Win32.UnregisterHotKey(_this.Handle, ESC_ID);
+
+                IngameShortCutKeyUnregister();
+                HookUnregister();
+            }
+        }
+
+        private void Mouseclick(Point pt)
+        {
+            Point prevCursor = Cursor.Position;
+
+            Cursor.Position = pt;
+            Win32.mouse_event(Win32.LBUTTONDOWN | Win32.LBUTTONUP, 0, 0, 0, 0);
+            Delay(20);
+
+            Cursor.Position = prevCursor;
+        }
+        
+        // ===================================================================================
+        
+
+        // Event
+        // ===================================================================================
+
+        private void _Process_Exited(object sender, EventArgs e)
+        {
+            this.Invoke(new Action(delegate ()
+            {
                 _Process = null;
-            }
 
-            _Process = processList[0];
-            notifyIcon.Icon = Properties.Resources.Green;
-            pictureBox_ProcessStatus.BackColor = Color.Lime;
+                notifyIcon.Icon = Properties.Resources.Red;
+                pictureBox_ProcessStatus.BackColor = Color.Red;
 
-            if (Properties.Settings.Default.isRefreshMute)
-            {
-                trackBar_sound.Value = 0;
-                button_mute.Image = Properties.Resources.Mute;
-                _isMute = true;
+                button_Screenshot.Enabled = false;
+                checkBox_Hide.Enabled = false;
+                checkBox_IngameShortcut.Enabled = false;
+                clientHideToolStripMenuItem.Enabled = false;
+                클라숨기기ToolStripMenuItem.Enabled = false;
 
-                VolumeMixer.SetApplicationMute(_Process.Id, true);
-                VolumeMixer.SetApplicationVolume(_Process.Id, 0f);
-            }
+                if (true == checkBox_IngameShortcut.Checked)
+                {
+                    checkBox_IngameShortcut.Checked = false;
 
-            return true;
+                    _isUsingChat = false;
+                    Win32.UnregisterHotKey(_this.Handle, ESC_ID);
+
+                    IngameShortCutKeyUnregister();
+                    HookUnregister();
+                }
+
+                checkBox_Hide.Checked = false;
+            }));
         }
 
         private void button_Refresh_Click(object sender, EventArgs e)
@@ -255,9 +603,16 @@ namespace TaskManager
         private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(null != _Process)
-                ShowWindow((int)_Process.MainWindowHandle, SW_SHOW);
+                Win32.ShowWindow((int)_Process.MainWindowHandle, Win32.SW_SHOW);
 
             HotKeyUnregister();
+            
+            if(true == _this.checkBox_IngameShortcut.Checked)
+            {
+                IngameShortCutKeyUnregister();
+                HookUnregister();
+            }
+
             Application.Exit();
         }
 
@@ -277,40 +632,6 @@ namespace TaskManager
             VolumeMixer.SetApplicationVolume(_Process.Id, trackBar_sound.Value);
         }
 
-        private void HideClient()
-        {
-            if (null == _Process)
-                return;
-
-            IntPtr handle = _Process.MainWindowHandle;
-
-            if (true == _isHide)
-            {
-                _isHide = false;
-                ShowWindow((int)handle, SW_SHOW);
-                button_Hide.Text = "클라 숨기기";
-                클라숨기기ToolStripMenuItem.Text = "클라 숨기기";
-                clientHideToolStripMenuItem.Text = "클라 숨기기";
-            }
-            else
-            {
-                _isHide = true;
-                ShowWindow((int)handle, SW_HIDE);
-                button_Hide.Text = "클라 띄우기";
-                클라숨기기ToolStripMenuItem.Text = "클라 띄우기";
-                clientHideToolStripMenuItem.Text = "클라 띄우기";
-
-                _isMute = true;
-                button_mute.Image = Properties.Resources.Mute;
-                VolumeMixer.SetApplicationMute(_Process.Id, true);
-            }
-        }
-
-        private void button_Hide_Click(object sender, EventArgs e)
-        {
-            HideClient();
-        }
-
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -319,58 +640,38 @@ namespace TaskManager
                 Hide();
 
                 if(Properties.Settings.Default.isBalloon)
+                {
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    notifyIcon.BalloonTipTitle = "작업 관리자";
+                    notifyIcon.BalloonTipText = "프로그램이 실행 중 입니다.";
                     notifyIcon.ShowBalloonTip(2000);
+                }
             }
-        }
-
-        public void HotKeyUnregister()
-        {
-            UnregisterHotKey(this.Handle, BOSSKEY_ID);
-            UnregisterHotKey(this.Handle, VOLUMEUPKEY_ID);
-            UnregisterHotKey(this.Handle, VOLUMEDOWNKEY_ID);
-            UnregisterHotKey(this.Handle, MUTEKEY_ID);
-            UnregisterHotKey(this.Handle, SCREENSHOT_ID);
-        }
-
-        public void HotKeyRegister()
-        {
-            KeyModifiers modifier = (KeyModifiers)(Properties.Settings.Default.BossKeyModifiers);
-            Keys key = (Keys)(Properties.Settings.Default.BossKey);
-            RegisterHotKey(this.Handle, BOSSKEY_ID, modifier, key);
-
-            modifier = (KeyModifiers)(Properties.Settings.Default.VolumeUpModifiers);
-            key = (Keys)(Properties.Settings.Default.VolumeUpKey);
-            RegisterHotKey(this.Handle, VOLUMEUPKEY_ID, modifier, key);
-
-            modifier = (KeyModifiers)(Properties.Settings.Default.VolumeDownModifiers);
-            key = (Keys)(Properties.Settings.Default.VolumeDownKey);
-            RegisterHotKey(this.Handle, VOLUMEDOWNKEY_ID, modifier, key);
-
-            modifier = (KeyModifiers)(Properties.Settings.Default.MuteKeyModifiers);
-            key = (Keys)(Properties.Settings.Default.MuteKey);
-            RegisterHotKey(this.Handle, MUTEKEY_ID, modifier, key);
-
-            modifier = (KeyModifiers)(Properties.Settings.Default.ScreenshotModifier);
-            key = (Keys)(Properties.Settings.Default.ScreenshotKey);
-            RegisterHotKey(this.Handle, SCREENSHOT_ID, modifier, key);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (null != _Process)
-                ShowWindow((int)_Process.MainWindowHandle, SW_SHOW);
+                Win32.ShowWindow((int)_Process.MainWindowHandle, Win32.SW_SHOW);
 
             HotKeyUnregister();
+
+            if (true == _this.checkBox_IngameShortcut.Checked)
+            {
+                IngameShortCutKeyUnregister();
+                HookUnregister();
+            }
+
             Application.Exit();
         }
 
         private void button_mute_Click(object sender, EventArgs e)
         {
-            if(true == _isMute)
+            if (true == _isMute)
             {
                 _isMute = false;
                 button_mute.Image = Properties.Resources.Speaker;
-                if(null != _Process)
+                if (null != _Process)
                     VolumeMixer.SetApplicationMute(_Process.Id, false);
             }
             else
@@ -382,19 +683,20 @@ namespace TaskManager
             }
         }
 
-        private void pictureBox_Click(object sender, EventArgs e)
-        {
-            RandomWeapon();
-        }
-
         private void 클라숨기기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HideClient();
+            if (true == checkBox_Hide.Checked)
+                checkBox_Hide.Checked = false;
+            else
+                checkBox_Hide.Checked = true;
         }
 
         private void clientHideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HideClient();
+            if (true == checkBox_Hide.Checked)
+                checkBox_Hide.Checked = false;
+            else
+                checkBox_Hide.Checked = true;
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -405,6 +707,18 @@ namespace TaskManager
         private void settingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HotKeyUnregister();
+
+            if (true == checkBox_IngameShortcut.Checked)
+            {
+                if(true == _isUsingChat)
+                {
+                    MessageBox.Show("대화창 종료 후 옵션 창을 열어주세요.");
+                    return;
+                }
+
+                IngameShortCutKeyUnregister();
+                HookUnregister();
+            }
 
             Option op = new Option();
             op.InitOption(this);
@@ -417,12 +731,57 @@ namespace TaskManager
             info.ShowDialog();
         }
 
+        private void button_Screenshot_Click(object sender, EventArgs e)
+        {
+            Screenshot();
+        }
+
+        private void checkBox_Hide_CheckedChanged(object sender, EventArgs e)
+        {
+            HideClient();
+        }
+
+        private void checkBox_IngameShortcut_CheckedChanged(object sender, EventArgs e)
+        {
+            IngameShortcut();
+        }
+
+        // ===================================================================================
+
+        private void HideClient()
+        {
+            if (null == _Process)
+                return;
+
+            IntPtr handle = _Process.MainWindowHandle;
+
+            if (false == checkBox_Hide.Checked)
+            {
+
+                Win32.ShowWindow((int)handle, Win32.SW_SHOW);
+                checkBox_Hide.Text = "클라 숨기기";
+                클라숨기기ToolStripMenuItem.Text = "클라 숨기기";
+                clientHideToolStripMenuItem.Text = "클라 숨기기";
+            }
+            else
+            {
+                Win32.ShowWindow((int)handle, Win32.SW_HIDE);
+                checkBox_Hide.Text = "클라 띄우기";
+                클라숨기기ToolStripMenuItem.Text = "클라 띄우기";
+                clientHideToolStripMenuItem.Text = "클라 띄우기";
+
+                _isMute = true;
+                button_mute.Image = Properties.Resources.Mute;
+                VolumeMixer.SetApplicationMute(_Process.Id, true);
+            }
+        }
+
         private void Screenshot()
         {
             if (null == _Process)
                 return;
 
-            if (true == _isHide)
+            if (true == checkBox_Hide.Checked)
                 return;
 
             Rectangle rect = Rectangle.Empty;
@@ -433,15 +792,15 @@ namespace TaskManager
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap = gfxBmp.GetHdc();
-            bool succeeded = PrintWindow(_Process.MainWindowHandle, hdcBitmap, 3);
+            bool succeeded = Win32.PrintWindow(_Process.MainWindowHandle, hdcBitmap, 3);
 
             gfxBmp.ReleaseHdc(hdcBitmap);
             if(!succeeded)
             {
                 gfxBmp.FillRectangle(new SolidBrush(Color.Gray), new Rectangle(System.Drawing.Point.Empty, bmp.Size));
             }
-            IntPtr hRgn = CreateRectRgn(0, 0, 0, 0);
-            GetWindowRgn(_Process.MainWindowHandle, hRgn);
+            IntPtr hRgn = Win32.CreateRectRgn(0, 0, 0, 0);
+            Win32.GetWindowRgn(_Process.MainWindowHandle, hRgn);
             Region region = Region.FromHrgn(hRgn);
             if(!region.IsEmpty(gfxBmp))
             {
@@ -453,9 +812,64 @@ namespace TaskManager
             bmp.Save(Application.StartupPath + "\\Langrisser" + DateTime.Now.ToString("_MM-dd_hh-mm-ss") + ".png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        private void button_Screenshot_Click(object sender, EventArgs e)
+        public bool SearchProcess()
         {
-            Screenshot();
+            Process[] processList = Process.GetProcessesByName("Langrisser");
+
+            if (1 > processList.Length || 1 < processList.Length)
+            {
+                notifyIcon.Icon = Properties.Resources.Red;
+                pictureBox_ProcessStatus.BackColor = Color.Red;
+                if (null != _Process)
+                {
+                    _Process.Dispose();
+                    _Process = null;
+                }
+
+                button_Screenshot.Enabled = false;
+                checkBox_Hide.Enabled = false;
+                checkBox_IngameShortcut.Enabled = false;
+                clientHideToolStripMenuItem.Enabled = false;
+                클라숨기기ToolStripMenuItem.Enabled = false;
+
+                return false;
+            }
+
+            if (null != _Process)
+            {
+                _Process.Dispose();
+                _Process = null;
+            }
+
+            _Process = processList[0];
+            _Process.EnableRaisingEvents = true;
+            _Process.Exited += _Process_Exited;
+
+            notifyIcon.Icon = Properties.Resources.Green;
+            pictureBox_ProcessStatus.BackColor = Color.Lime;
+
+            button_Screenshot.Enabled = true;
+            checkBox_Hide.Enabled = true;
+            checkBox_IngameShortcut.Enabled = true;
+            clientHideToolStripMenuItem.Enabled = true;
+            클라숨기기ToolStripMenuItem.Enabled = true;
+
+            if (Properties.Settings.Default.isRefreshMute)
+            {
+                trackBar_sound.Value = 0;
+                button_mute.Image = Properties.Resources.Mute;
+                _isMute = true;
+
+                VolumeMixer.SetApplicationMute(_Process.Id, true);
+                VolumeMixer.SetApplicationVolume(_Process.Id, 0f);
+            }
+            else
+            {
+                VolumeMixer.SetApplicationMute(_Process.Id, _isMute);
+                VolumeMixer.SetApplicationVolume(_Process.Id, trackBar_sound.Value);
+            }
+
+            return true;
         }
     }
 }

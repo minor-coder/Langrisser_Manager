@@ -43,7 +43,21 @@
             this.label4 = new System.Windows.Forms.Label();
             this.textBox_MuteKey = new System.Windows.Forms.TextBox();
             this.checkBox_RefreshMute = new System.Windows.Forms.CheckBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.textBox_ingameShortcut = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.textBox_cancel = new System.Windows.Forms.TextBox();
+            this.textBox_ok = new System.Windows.Forms.TextBox();
+            this.textBox_skill1 = new System.Windows.Forms.TextBox();
+            this.textBox_skill2 = new System.Windows.Forms.TextBox();
+            this.textBox_skill3 = new System.Windows.Forms.TextBox();
+            this.textBox_wait = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox_HotKey.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // button_Save
@@ -202,12 +216,147 @@
             this.checkBox_RefreshMute.Text = "새로고침시 음소거";
             this.checkBox_RefreshMute.UseVisualStyleBackColor = true;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImage = global::TaskManager.Properties.Resources.skill;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Location = new System.Drawing.Point(577, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(239, 235);
+            this.pictureBox1.TabIndex = 12;
+            this.pictureBox1.TabStop = false;
+            // 
+            // textBox_ingameShortcut
+            // 
+            this.textBox_ingameShortcut.Location = new System.Drawing.Point(415, 32);
+            this.textBox_ingameShortcut.Name = "textBox_ingameShortcut";
+            this.textBox_ingameShortcut.ReadOnly = true;
+            this.textBox_ingameShortcut.Size = new System.Drawing.Size(133, 21);
+            this.textBox_ingameShortcut.TabIndex = 13;
+            this.textBox_ingameShortcut.Text = "Ctrl + Shift + S";
+            this.textBox_ingameShortcut.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_ingameShortcut_KeyUp);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(312, 35);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(97, 12);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Ingame Shortcut";
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackgroundImage = global::TaskManager.Properties.Resources.ok_cancel;
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox2.Location = new System.Drawing.Point(309, 126);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(239, 106);
+            this.pictureBox2.TabIndex = 15;
+            this.pictureBox2.TabStop = false;
+            // 
+            // textBox_cancel
+            // 
+            this.textBox_cancel.Location = new System.Drawing.Point(339, 195);
+            this.textBox_cancel.Name = "textBox_cancel";
+            this.textBox_cancel.ReadOnly = true;
+            this.textBox_cancel.Size = new System.Drawing.Size(46, 21);
+            this.textBox_cancel.TabIndex = 16;
+            this.textBox_cancel.Text = "A";
+            this.textBox_cancel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_cancel.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_cancel_KeyUp);
+            // 
+            // textBox_ok
+            // 
+            this.textBox_ok.Location = new System.Drawing.Point(472, 195);
+            this.textBox_ok.Name = "textBox_ok";
+            this.textBox_ok.ReadOnly = true;
+            this.textBox_ok.Size = new System.Drawing.Size(46, 21);
+            this.textBox_ok.TabIndex = 17;
+            this.textBox_ok.Text = "Space";
+            this.textBox_ok.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_ok.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_ok_KeyUp);
+            // 
+            // textBox_skill1
+            // 
+            this.textBox_skill1.Location = new System.Drawing.Point(604, 209);
+            this.textBox_skill1.Name = "textBox_skill1";
+            this.textBox_skill1.ReadOnly = true;
+            this.textBox_skill1.Size = new System.Drawing.Size(46, 21);
+            this.textBox_skill1.TabIndex = 18;
+            this.textBox_skill1.Text = "W";
+            this.textBox_skill1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_skill1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_skill1_KeyUp);
+            // 
+            // textBox_skill2
+            // 
+            this.textBox_skill2.Location = new System.Drawing.Point(661, 126);
+            this.textBox_skill2.Name = "textBox_skill2";
+            this.textBox_skill2.ReadOnly = true;
+            this.textBox_skill2.Size = new System.Drawing.Size(46, 21);
+            this.textBox_skill2.TabIndex = 19;
+            this.textBox_skill2.Text = "E";
+            this.textBox_skill2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_skill2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_skill2_KeyUp);
+            // 
+            // textBox_skill3
+            // 
+            this.textBox_skill3.Location = new System.Drawing.Point(743, 73);
+            this.textBox_skill3.Name = "textBox_skill3";
+            this.textBox_skill3.ReadOnly = true;
+            this.textBox_skill3.Size = new System.Drawing.Size(46, 21);
+            this.textBox_skill3.TabIndex = 20;
+            this.textBox_skill3.Text = "R";
+            this.textBox_skill3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_skill3.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_skill3_KeyUp);
+            // 
+            // textBox_wait
+            // 
+            this.textBox_wait.Location = new System.Drawing.Point(735, 200);
+            this.textBox_wait.Name = "textBox_wait";
+            this.textBox_wait.ReadOnly = true;
+            this.textBox_wait.Size = new System.Drawing.Size(46, 21);
+            this.textBox_wait.TabIndex = 21;
+            this.textBox_wait.Text = "Space";
+            this.textBox_wait.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox_wait.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_wait_KeyUp);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(312, 105);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(85, 12);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "스킬 확인 버튼";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(593, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 12);
+            this.label8.TabIndex = 23;
+            this.label8.Text = "스킬 버튼";
+            // 
             // Option
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 256);
+            this.ClientSize = new System.Drawing.Size(828, 259);
             this.ControlBox = false;
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.textBox_wait);
+            this.Controls.Add(this.textBox_skill3);
+            this.Controls.Add(this.textBox_skill2);
+            this.Controls.Add(this.textBox_skill1);
+            this.Controls.Add(this.textBox_ok);
+            this.Controls.Add(this.textBox_cancel);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.textBox_ingameShortcut);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.checkBox_RefreshMute);
             this.Controls.Add(this.groupBox_HotKey);
             this.Controls.Add(this.button1);
@@ -217,6 +366,8 @@
             this.Text = "설정";
             this.groupBox_HotKey.ResumeLayout(false);
             this.groupBox_HotKey.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -238,5 +389,17 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox_Screenshot;
         private System.Windows.Forms.CheckBox checkBox_RefreshMute;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox textBox_ingameShortcut;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.TextBox textBox_cancel;
+        private System.Windows.Forms.TextBox textBox_ok;
+        private System.Windows.Forms.TextBox textBox_skill1;
+        private System.Windows.Forms.TextBox textBox_skill2;
+        private System.Windows.Forms.TextBox textBox_skill3;
+        private System.Windows.Forms.TextBox textBox_wait;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
     }
 }

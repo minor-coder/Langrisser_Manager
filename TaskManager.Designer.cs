@@ -38,8 +38,6 @@
             this.새로고침ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.button_Hide = new System.Windows.Forms.Button();
             this.trackBar_sound = new System.Windows.Forms.TrackBar();
             this.button_mute = new System.Windows.Forms.Button();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -52,27 +50,30 @@
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_Screenshot = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox_IngameShortcut = new System.Windows.Forms.CheckBox();
+            this.checkBox_Hide = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ProcessStatus)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_sound)).BeginInit();
             this.menuStrip.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox_ProcessStatus
             // 
             this.pictureBox_ProcessStatus.BackColor = System.Drawing.Color.Red;
-            this.pictureBox_ProcessStatus.Location = new System.Drawing.Point(125, 252);
+            this.pictureBox_ProcessStatus.Location = new System.Drawing.Point(15, 25);
             this.pictureBox_ProcessStatus.Name = "pictureBox_ProcessStatus";
-            this.pictureBox_ProcessStatus.Size = new System.Drawing.Size(79, 23);
+            this.pictureBox_ProcessStatus.Size = new System.Drawing.Size(79, 30);
             this.pictureBox_ProcessStatus.TabIndex = 0;
             this.pictureBox_ProcessStatus.TabStop = false;
             // 
             // button_Refresh
             // 
-            this.button_Refresh.Location = new System.Drawing.Point(34, 252);
+            this.button_Refresh.Location = new System.Drawing.Point(15, 61);
             this.button_Refresh.Name = "button_Refresh";
-            this.button_Refresh.Size = new System.Drawing.Size(79, 23);
+            this.button_Refresh.Size = new System.Drawing.Size(79, 30);
             this.button_Refresh.TabIndex = 1;
             this.button_Refresh.Text = "새로고침";
             this.button_Refresh.UseVisualStyleBackColor = true;
@@ -96,12 +97,13 @@
             this.toolStripMenuItem2,
             this.종료ToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(139, 76);
+            this.contextMenuStrip.Size = new System.Drawing.Size(181, 98);
             // 
             // 클라숨기기ToolStripMenuItem
             // 
+            this.클라숨기기ToolStripMenuItem.Enabled = false;
             this.클라숨기기ToolStripMenuItem.Name = "클라숨기기ToolStripMenuItem";
-            this.클라숨기기ToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.클라숨기기ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.클라숨기기ToolStripMenuItem.Text = "클라 숨기기";
             this.클라숨기기ToolStripMenuItem.Click += new System.EventHandler(this.클라숨기기ToolStripMenuItem_Click);
             // 
@@ -124,34 +126,13 @@
             this.종료ToolStripMenuItem.Text = "종료";
             this.종료ToolStripMenuItem.Click += new System.EventHandler(this.종료ToolStripMenuItem_Click);
             // 
-            // pictureBox
-            // 
-            this.pictureBox.Image = global::TaskManager.Properties.Resources.w6;
-            this.pictureBox.Location = new System.Drawing.Point(34, 37);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(170, 170);
-            this.pictureBox.TabIndex = 2;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
-            // 
-            // button_Hide
-            // 
-            this.button_Hide.Location = new System.Drawing.Point(34, 223);
-            this.button_Hide.Name = "button_Hide";
-            this.button_Hide.Size = new System.Drawing.Size(79, 23);
-            this.button_Hide.TabIndex = 4;
-            this.button_Hide.Text = "클라 숨기기";
-            this.button_Hide.UseVisualStyleBackColor = true;
-            this.button_Hide.Click += new System.EventHandler(this.button_Hide_Click);
-            // 
             // trackBar_sound
             // 
             this.trackBar_sound.LargeChange = 30;
-            this.trackBar_sound.Location = new System.Drawing.Point(237, 37);
+            this.trackBar_sound.Location = new System.Drawing.Point(72, 94);
             this.trackBar_sound.Maximum = 100;
             this.trackBar_sound.Name = "trackBar_sound";
-            this.trackBar_sound.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar_sound.Size = new System.Drawing.Size(45, 200);
+            this.trackBar_sound.Size = new System.Drawing.Size(200, 45);
             this.trackBar_sound.SmallChange = 10;
             this.trackBar_sound.TabIndex = 5;
             this.trackBar_sound.TickFrequency = 5;
@@ -161,7 +142,7 @@
             // button_mute
             // 
             this.button_mute.Image = global::TaskManager.Properties.Resources.Mute;
-            this.button_mute.Location = new System.Drawing.Point(239, 239);
+            this.button_mute.Location = new System.Drawing.Point(29, 97);
             this.button_mute.Name = "button_mute";
             this.button_mute.Size = new System.Drawing.Size(36, 36);
             this.button_mute.TabIndex = 6;
@@ -175,7 +156,7 @@
             this.optionToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(314, 24);
+            this.menuStrip.Size = new System.Drawing.Size(422, 24);
             this.menuStrip.TabIndex = 7;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -192,8 +173,9 @@
             // 
             // clientHideToolStripMenuItem
             // 
+            this.clientHideToolStripMenuItem.Enabled = false;
             this.clientHideToolStripMenuItem.Name = "clientHideToolStripMenuItem";
-            this.clientHideToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.clientHideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clientHideToolStripMenuItem.Text = "클라 숨기기";
             this.clientHideToolStripMenuItem.Click += new System.EventHandler(this.clientHideToolStripMenuItem_Click);
             // 
@@ -241,27 +223,64 @@
             // 
             // button_Screenshot
             // 
-            this.button_Screenshot.Location = new System.Drawing.Point(125, 223);
+            this.button_Screenshot.Enabled = false;
+            this.button_Screenshot.Location = new System.Drawing.Point(204, 36);
             this.button_Screenshot.Name = "button_Screenshot";
-            this.button_Screenshot.Size = new System.Drawing.Size(79, 23);
+            this.button_Screenshot.Size = new System.Drawing.Size(90, 43);
             this.button_Screenshot.TabIndex = 8;
             this.button_Screenshot.Text = "스크린샷";
             this.button_Screenshot.UseVisualStyleBackColor = true;
             this.button_Screenshot.Click += new System.EventHandler(this.button_Screenshot_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.pictureBox_ProcessStatus);
+            this.groupBox1.Controls.Add(this.button_Refresh);
+            this.groupBox1.Location = new System.Drawing.Point(301, 36);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(109, 103);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "클라 연결상태";
+            // 
+            // checkBox_IngameShortcut
+            // 
+            this.checkBox_IngameShortcut.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox_IngameShortcut.Enabled = false;
+            this.checkBox_IngameShortcut.Location = new System.Drawing.Point(12, 37);
+            this.checkBox_IngameShortcut.Name = "checkBox_IngameShortcut";
+            this.checkBox_IngameShortcut.Size = new System.Drawing.Size(90, 43);
+            this.checkBox_IngameShortcut.TabIndex = 11;
+            this.checkBox_IngameShortcut.Text = "인게임 단축키";
+            this.checkBox_IngameShortcut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox_IngameShortcut.UseVisualStyleBackColor = true;
+            this.checkBox_IngameShortcut.CheckedChanged += new System.EventHandler(this.checkBox_IngameShortcut_CheckedChanged);
+            // 
+            // checkBox_Hide
+            // 
+            this.checkBox_Hide.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox_Hide.Enabled = false;
+            this.checkBox_Hide.Location = new System.Drawing.Point(108, 37);
+            this.checkBox_Hide.Name = "checkBox_Hide";
+            this.checkBox_Hide.Size = new System.Drawing.Size(90, 43);
+            this.checkBox_Hide.TabIndex = 12;
+            this.checkBox_Hide.Text = "클라 숨기기";
+            this.checkBox_Hide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox_Hide.UseVisualStyleBackColor = true;
+            this.checkBox_Hide.CheckedChanged += new System.EventHandler(this.checkBox_Hide_CheckedChanged);
+            // 
             // TaskManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 291);
+            this.ClientSize = new System.Drawing.Size(422, 153);
+            this.Controls.Add(this.checkBox_Hide);
+            this.Controls.Add(this.checkBox_IngameShortcut);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button_Screenshot);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.button_mute);
             this.Controls.Add(this.trackBar_sound);
-            this.Controls.Add(this.button_Hide);
-            this.Controls.Add(this.pictureBox);
-            this.Controls.Add(this.button_Refresh);
-            this.Controls.Add(this.pictureBox_ProcessStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "TaskManager";
@@ -269,10 +288,10 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ProcessStatus)).EndInit();
             this.contextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_sound)).EndInit();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,8 +306,6 @@
         private System.Windows.Forms.ToolStripMenuItem 새로고침ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 종료ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 클라숨기기ToolStripMenuItem;
-        private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.Button button_Hide;
         private System.Windows.Forms.TrackBar trackBar_sound;
         private System.Windows.Forms.Button button_mute;
         private System.Windows.Forms.MenuStrip menuStrip;
@@ -302,6 +319,9 @@
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
         private System.Windows.Forms.Button button_Screenshot;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox checkBox_Hide;
+        public System.Windows.Forms.CheckBox checkBox_IngameShortcut;
     }
 }
 

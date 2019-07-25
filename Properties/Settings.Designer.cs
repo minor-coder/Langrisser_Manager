@@ -133,19 +133,19 @@ namespace TaskManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6")]
-        public int ScreenshotModifier {
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ScreenshotModifiers {
             get {
-                return ((int)(this["ScreenshotModifier"]));
+                return ((int)(this["ScreenshotModifiers"]));
             }
             set {
-                this["ScreenshotModifier"] = value;
+                this["ScreenshotModifiers"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("83")]
+        [global::System.Configuration.DefaultSettingValueAttribute("123")]
         public int ScreenshotKey {
             get {
                 return ((int)(this["ScreenshotKey"]));
@@ -164,6 +164,102 @@ namespace TaskManager.Properties {
             }
             set {
                 this["isRefreshMute"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("87")]
+        public int Skill1Key {
+            get {
+                return ((int)(this["Skill1Key"]));
+            }
+            set {
+                this["Skill1Key"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("69")]
+        public int Skill2Key {
+            get {
+                return ((int)(this["Skill2Key"]));
+            }
+            set {
+                this["Skill2Key"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("82")]
+        public int Skill3Key {
+            get {
+                return ((int)(this["Skill3Key"]));
+            }
+            set {
+                this["Skill3Key"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("68")]
+        public int OKKey {
+            get {
+                return ((int)(this["OKKey"]));
+            }
+            set {
+                this["OKKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("65")]
+        public int CancelKey {
+            get {
+                return ((int)(this["CancelKey"]));
+            }
+            set {
+                this["CancelKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("32")]
+        public int WaitKey {
+            get {
+                return ((int)(this["WaitKey"]));
+            }
+            set {
+                this["WaitKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int IngameShortcutModifiers {
+            get {
+                return ((int)(this["IngameShortcutModifiers"]));
+            }
+            set {
+                this["IngameShortcutModifiers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("83")]
+        public int IngameShortcutKey {
+            get {
+                return ((int)(this["IngameShortcutKey"]));
+            }
+            set {
+                this["IngameShortcutKey"] = value;
             }
         }
     }

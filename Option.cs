@@ -19,6 +19,14 @@ namespace TaskManager
         public HotKey _VolumeDown;
         public HotKey _MuteKey;
         public HotKey _ScreenshotKey;
+        public HotKey _IngameShortcut;
+
+        public HotKey _Skill1Key;
+        public HotKey _Skill2Key;
+        public HotKey _Skill3Key;
+        public HotKey _WaitKey;
+        public HotKey _OKKey;
+        public HotKey _CancelKey;
 
         public Option()
         {
@@ -51,9 +59,38 @@ namespace TaskManager
             _MuteKey.key = Properties.Settings.Default.MuteKey;
             ShowHotKey(textBox_MuteKey, _MuteKey);
 
-            _ScreenshotKey.modifiers = ModifiersCalcRerv(Properties.Settings.Default.ScreenshotModifier);
+            _ScreenshotKey.modifiers = ModifiersCalcRerv(Properties.Settings.Default.ScreenshotModifiers);
             _ScreenshotKey.key = Properties.Settings.Default.ScreenshotKey;
             ShowHotKey(textBox_Screenshot, _ScreenshotKey);
+
+
+            _IngameShortcut.modifiers = ModifiersCalcRerv(Properties.Settings.Default.IngameShortcutModifiers);
+            _IngameShortcut.key = Properties.Settings.Default.IngameShortcutKey;
+            ShowHotKey(textBox_ingameShortcut, _IngameShortcut);
+
+            _Skill1Key.modifiers = 0;
+            _Skill1Key.key = Properties.Settings.Default.Skill1Key;
+            ShowOnlyHotKey(textBox_skill1, _Skill1Key);
+
+            _Skill2Key.modifiers = 0;
+            _Skill2Key.key = Properties.Settings.Default.Skill2Key;
+            ShowOnlyHotKey(textBox_skill2, _Skill2Key);
+
+            _Skill3Key.modifiers = 0;
+            _Skill3Key.key = Properties.Settings.Default.Skill3Key;
+            ShowOnlyHotKey(textBox_skill3, _Skill3Key);
+
+            _WaitKey.modifiers = 0;
+            _WaitKey.key = Properties.Settings.Default.WaitKey;
+            ShowOnlyHotKey(textBox_wait, _WaitKey);
+
+            //_OKKey.modifiers = 0;
+            //_OKKey.key = Properties.Settings.Default.OKKey;
+            ShowOnlyHotKey(textBox_ok, _WaitKey);
+
+            _CancelKey.modifiers = 0;
+            _CancelKey.key = Properties.Settings.Default.CancelKey;
+            ShowOnlyHotKey(textBox_cancel, _CancelKey);
         }
 
         private void button_Save_Click(object sender, EventArgs e)
@@ -73,12 +110,30 @@ namespace TaskManager
             Properties.Settings.Default.MuteKeyModifiers = ModifiersCalc(_MuteKey);
             Properties.Settings.Default.MuteKey = _MuteKey.key;
 
-            Properties.Settings.Default.ScreenshotModifier = ModifiersCalc(_ScreenshotKey);
+            Properties.Settings.Default.ScreenshotModifiers = ModifiersCalc(_ScreenshotKey);
             Properties.Settings.Default.ScreenshotKey = _ScreenshotKey.key;
 
+            Properties.Settings.Default.IngameShortcutModifiers = ModifiersCalc(_IngameShortcut);
+            Properties.Settings.Default.IngameShortcutKey = _IngameShortcut.key;
+            
+            Properties.Settings.Default.Skill1Key = _Skill1Key.key;
+            Properties.Settings.Default.Skill2Key = _Skill2Key.key;
+            Properties.Settings.Default.Skill3Key = _Skill3Key.key;
+            Properties.Settings.Default.WaitKey = _WaitKey.key;
+            //Properties.Settings.Default.OKKey = _OKKey.key;
+            Properties.Settings.Default.CancelKey = _CancelKey.key;
+
+      
             Properties.Settings.Default.Save();
 
             _tm.HotKeyRegister();
+
+            if (true == _tm.checkBox_IngameShortcut.Checked)
+            {
+                _tm.IngameShortCutKeyRegister();
+                TaskManager.HookRegister();
+            }
+
             this.Close();
         }
 
@@ -112,6 +167,12 @@ namespace TaskManager
         private void button1_Click(object sender, EventArgs e)
         {
             _tm.HotKeyRegister();
+            if(true == _tm.checkBox_IngameShortcut.Checked)
+            {
+                _tm.IngameShortCutKeyRegister();
+                TaskManager.HookRegister();
+            }
+
             this.Close();
         }
 
@@ -138,6 +199,11 @@ namespace TaskManager
         private void textBox_Screenshot_KeyUp(object sender, KeyEventArgs e)
         {
             ShowHotKey(sender, e, ref _ScreenshotKey);
+        }
+
+        private void textBox_ingameShortcut_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowHotKey(sender, e, ref _IngameShortcut);
         }
 
         private void ShowHotKey(object sender, HotKey hotKey)
@@ -244,6 +310,89 @@ namespace TaskManager
 
             hotKey.modifiers = modifiers;
             hotKey.key = key;
+        }
+
+        private void ShowOnlyHotKey(object sender, HotKey hotKey)
+        {
+            TextBox textBox = (TextBox)sender;
+            string text = "";
+
+            if (65 <= hotKey.key && 90 >= hotKey.key)
+                text += (char)hotKey.key;
+            else if (37 == hotKey.key)
+                text += "←";
+            else if (38 == hotKey.key)
+                text += "↑";
+            else if (39 == hotKey.key)
+                text += "→";
+            else if (40 == hotKey.key)
+                text += "↓";
+            else if (32 == hotKey.key)
+                text += "Space";
+
+            textBox.Text = text;
+        }
+
+        private void ShowOnlyHotKey(object sender, KeyEventArgs e, ref HotKey hotKey)
+        {
+            TextBox textBox = (TextBox)sender;
+            
+            int key = e.KeyValue;
+
+            if ((65 > key || 90 < key) && (37 > key || 40 < key) && 32 != key)
+                return;
+
+            string text = "";
+
+            if (65 <= key && 90 >= key)
+                text += (char)key;
+            else if (37 == key)
+                text += "←";
+            else if (38 == key)
+                text += "↑";
+            else if (39 == key)
+                text += "→";
+            else if (40 == key)
+                text += "↓";
+            else if (32 == key)
+                text += "Space";
+
+            textBox.Text = text;
+
+            hotKey.modifiers = 0;
+            hotKey.key = key;
+        }
+
+        private void textBox_cancel_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _CancelKey);
+        }
+
+        private void textBox_ok_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _WaitKey);
+            ShowOnlyHotKey(textBox_wait, e, ref _WaitKey);
+        }
+
+        private void textBox_skill1_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _Skill1Key);
+        }
+
+        private void textBox_skill2_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _Skill2Key);
+        }
+
+        private void textBox_skill3_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _Skill3Key);
+        }
+
+        private void textBox_wait_KeyUp(object sender, KeyEventArgs e)
+        {
+            ShowOnlyHotKey(sender, e, ref _WaitKey);
+            ShowOnlyHotKey(textBox_ok, e, ref _WaitKey);
         }
     }
 }

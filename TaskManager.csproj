@@ -72,6 +72,12 @@
     <Compile Include="Option.Designer.cs">
       <DependentUpon>Option.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="TaskManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +87,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VolumeMixer.cs" />
+    <Compile Include="Win32.cs" />
     <EmbeddedResource Include="Info.resx">
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
@@ -92,14 +99,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -240,11 +242,20 @@
     <None Include="bin\Debug\taskmanager.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="armor.ico" />
+    <None Include="Properties\skill.png" />
+    <None Include="Properties\ok_cancel.png" />
+    <None Include="Properties\Speaker.png" />
+    <None Include="Properties\Mute.png" />
+    <None Include="Properties\lang.png" />
+    <None Include="Properties\taskmanager.ico" />
+    <None Include="Properties\Red.ico" />
+    <None Include="Properties\Leon.ico" />
+    <None Include="Properties\lang.ico" />
+    <None Include="Properties\Green.ico" />
+    <None Include="Properties\armor.ico" />
     <None Include="bin\Debug\lang.png" />
     <None Include="bin\Debug\lang.ico" />
     <Content Include="lang.ico" />
-    <Content Include="Leon.ico" />
     <None Include="bin\Debug\Leon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
