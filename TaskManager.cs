@@ -269,6 +269,9 @@ namespace TaskManager
                 }
                 else
                 {
+                    if (null == Properties.Settings.Default.ManualInagmeShortcutList)
+                        Properties.Settings.Default.ManualInagmeShortcutList = new BindingList<UILocation>();
+
                     foreach (UILocation uiLocation in Properties.Settings.Default.ManualInagmeShortcutList)
                     {
                         if (KeyModifiers.None == modifier && uiLocation.key == key)
@@ -512,7 +515,10 @@ namespace TaskManager
             Win32.UnregisterHotKey(this.Handle, CANCEL_ID);
             Win32.UnregisterHotKey(this.Handle, WAIT_ID);
 
-            for(int i = 0; i < Properties.Settings.Default.ManualInagmeShortcutList.Count; ++i)
+            if (null == Properties.Settings.Default.ManualInagmeShortcutList)
+                Properties.Settings.Default.ManualInagmeShortcutList = new BindingList<UILocation>();
+
+            for (int i = 0; i < Properties.Settings.Default.ManualInagmeShortcutList.Count; ++i)
             {
                 if (false == Properties.Settings.Default.ManualInagmeShortcutList[i].isUsing)
                     continue;
@@ -542,6 +548,9 @@ namespace TaskManager
 
             key = (Keys)(Properties.Settings.Default.WaitKey);
             Win32.RegisterHotKey(this.Handle, WAIT_ID, modifier, key);
+
+            if (null == Properties.Settings.Default.ManualInagmeShortcutList)
+                Properties.Settings.Default.ManualInagmeShortcutList = new BindingList<UILocation>();
 
             for (int i = 0; i < Properties.Settings.Default.ManualInagmeShortcutList.Count; ++i)
             {
