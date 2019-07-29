@@ -67,14 +67,16 @@ namespace TaskManager
         private const int WAIT_ID = 10;
         private const int INGAMESHORTCUT_ID = 11;
 
+        private const int MANUALSHORTCUTSTART_ID = 50;
+
         private const int ESC_ID = 12;
 
-        private const int MAX_CLIENT_SIZE_X = 1600;
-        private const int MAX_CLIENT_SIZE_Y = 900;
+        public const int MAX_CLIENT_SIZE_X = 1600;
+        public const int MAX_CLIENT_SIZE_Y = 900;
 
         private static int c_hook = 0;
 
-        private const float MAX_CLIENT_ASPECT_RATIO = 1600f / 900f;
+        public const float MAX_CLIENT_ASPECT_RATIO = 1600f / 900f;
 
         public TaskManager()
         {
@@ -265,6 +267,23 @@ namespace TaskManager
                     Win32.keybd_event(Win32.VK_ESCAPE, 0, Win32.KE_DOWN, ref info);
                     Win32.keybd_event(Win32.VK_ESCAPE, 0, Win32.KE_UP, ref info);
                 }
+                else
+                {
+                    foreach (UILocation uiLocation in Properties.Settings.Default.ManualInagmeShortcutList)
+                    {
+                        if (KeyModifiers.None == modifier && uiLocation.key == key)
+                        {
+                            if (false == uiLocation.isUsing)
+                            {
+                                break;
+                            }
+
+                            IngameHotKey(uiLocation);
+                            break;
+                        }
+                    }
+                }
+                
             }
 
             base.WndProc(ref message);
@@ -408,7 +427,7 @@ namespace TaskManager
         // Ingame HotKey
         // ===================================================================================
 
-        private Point PointToResponsiveWindow(UILocation uiLocation)
+        public Point PointToResponsiveWindow(UILocation uiLocation)
         {
             if (null == _Process)
                 return new Point(0, 0);
@@ -422,11 +441,26 @@ namespace TaskManager
                 case UILocation.Direction.LT:
                     ptBasePoint = new Point(rect.Left, rect.Top);
                     break;
+                case UILocation.Direction.CT:
+                    ptBasePoint = new Point((rect.Right - rect.Left) / 2 + rect.Left, rect.Top);
+                    break;
                 case UILocation.Direction.RT:
                     ptBasePoint = new Point(rect.Right, rect.Top);
                     break;
+                case UILocation.Direction.LC:
+                    ptBasePoint = new Point(rect.Left, (rect.Bottom - rect.Top) / 2 + rect.Top);
+                    break;
+                case UILocation.Direction.CENTER:
+                    ptBasePoint = new Point((rect.Right - rect.Left) / 2 + rect.Left, (rect.Bottom - rect.Top) / 2 + rect.Top);
+                    break;
+                case UILocation.Direction.RC:
+                    ptBasePoint = new Point(rect.Right, (rect.Bottom - rect.Top) / 2 + rect.Top);
+                    break;
                 case UILocation.Direction.LB:
                     ptBasePoint = new Point(rect.Left, rect.Bottom);
+                    break;
+                case UILocation.Direction.CB:
+                    ptBasePoint = new Point((rect.Right - rect.Left) / 2 + rect.Left, rect.Bottom);
                     break;
                 case UILocation.Direction.RB:
                     ptBasePoint = new Point(rect.Right, rect.Bottom);
@@ -448,7 +482,7 @@ namespace TaskManager
             }
             else
             {
-                magnification = 1f;
+                magnification = ((float)rect.Right / MAX_CLIENT_SIZE_X);
             }
 
             Point ScreenLocation = new Point((int)(uiLocation.x * magnification), (int)(uiLocation.y * magnification));
@@ -477,6 +511,14 @@ namespace TaskManager
             //Win32.UnregisterHotKey(this.Handle, OK_ID);
             Win32.UnregisterHotKey(this.Handle, CANCEL_ID);
             Win32.UnregisterHotKey(this.Handle, WAIT_ID);
+
+            for(int i = 0; i < Properties.Settings.Default.ManualInagmeShortcutList.Count; ++i)
+            {
+                if (false == Properties.Settings.Default.ManualInagmeShortcutList[i].isUsing)
+                    continue;
+
+                Win32.UnregisterHotKey(this.Handle, MANUALSHORTCUTSTART_ID + i);
+            }
         }
 
         public void IngameShortCutKeyRegister()
@@ -500,6 +542,15 @@ namespace TaskManager
 
             key = (Keys)(Properties.Settings.Default.WaitKey);
             Win32.RegisterHotKey(this.Handle, WAIT_ID, modifier, key);
+
+            for (int i = 0; i < Properties.Settings.Default.ManualInagmeShortcutList.Count; ++i)
+            {
+                if (false == Properties.Settings.Default.ManualInagmeShortcutList[i].isUsing)
+                    continue;
+
+                key = Properties.Settings.Default.ManualInagmeShortcutList[i].key;
+                Win32.RegisterHotKey(this.Handle, MANUALSHORTCUTSTART_ID + i, modifier, key);
+            }
         }
 
         private void IngameShortcut()
@@ -789,27 +840,59 @@ namespace TaskManager
             Graphics gfxWin = Graphics.FromHwnd(_Process.MainWindowHandle);
             rect = Rectangle.Round(gfxWin.VisibleClipBounds);
 
+            if (0 >= rect.Width || 0 >= rect.Width)
+            {
+                gfxWin.Dispose();
+                return;
+            }
+
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap = gfxBmp.GetHdc();
             bool succeeded = Win32.PrintWindow(_Process.MainWindowHandle, hdcBitmap, 3);
 
             gfxBmp.ReleaseHdc(hdcBitmap);
-            if(!succeeded)
+            if (false == succeeded)
             {
                 gfxBmp.FillRectangle(new SolidBrush(Color.Gray), new Rectangle(System.Drawing.Point.Empty, bmp.Size));
             }
+
             IntPtr hRgn = Win32.CreateRectRgn(0, 0, 0, 0);
             Win32.GetWindowRgn(_Process.MainWindowHandle, hRgn);
             Region region = Region.FromHrgn(hRgn);
-            if(!region.IsEmpty(gfxBmp))
+            if (!region.IsEmpty(gfxBmp))
             {
                 gfxBmp.ExcludeClip(region);
                 gfxBmp.Clear(Color.Transparent);
             }
-            
+
             gfxBmp.Dispose();
             bmp.Save(Application.StartupPath + "\\Langrisser" + DateTime.Now.ToString("_MM-dd_hh-mm-ss") + ".png", System.Drawing.Imaging.ImageFormat.Png);
+
+
+            //Rect windowRect;
+            //Win32.GetWindowRect(_Process.MainWindowHandle, out windowRect);
+
+            //int width = windowRect.Right - windowRect.Left;
+            //int height = windowRect.Bottom - windowRect.Top;
+
+            //if (0 >= width || 0 >= height)
+            //    return;
+
+            //IntPtr hdcSrc = Win32.GetWindowDC(_Process.MainWindowHandle);
+            //IntPtr hdcDest = Win32.CreateCompatibleDC(hdcSrc);
+            //IntPtr hBitmap = Win32.CreateCompatibleBitmap(hdcSrc, width, height);
+            //IntPtr hOld = Win32.SelectObject(hdcDest, hBitmap);
+
+            //Win32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, 0, 0, Win32.SRCCOPY);
+            //Win32.SelectObject(hdcDest, hOld);
+            //Win32.DeleteDC(hdcDest);
+            //Win32.ReleaseDC(_Process.MainWindowHandle, hdcSrc);
+
+            //Bitmap bitmap = Image.FromHbitmap(hBitmap);
+            //Win32.DeleteObject(hBitmap);
+
+            //bitmap.Save(Application.StartupPath + "\\Langrisser" + DateTime.Now.ToString("_MM-dd_hh-mm-ss") + ".png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
         public bool SearchProcess()

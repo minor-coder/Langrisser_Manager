@@ -262,5 +262,16 @@ namespace TaskManager.Properties {
                 this["IngameShortcutKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.ComponentModel.BindingList<UILocation> ManualInagmeShortcutList {
+            get {
+                return ((global::System.ComponentModel.BindingList<UILocation>)(this["ManualInagmeShortcutList"]));
+            }
+            set {
+                this["ManualInagmeShortcutList"] = value;
+            }
+        }
     }
 }

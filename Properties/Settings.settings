@@ -62,5 +62,8 @@
     <Setting Name="IngameShortcutKey" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">83</Value>
     </Setting>
+    <Setting Name="ManualInagmeShortcutList" Type="System.Collections.Generic.BindingList&lt;UILocation&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

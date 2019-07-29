@@ -59,12 +59,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
+    <Compile Include="Define.cs" />
     <Compile Include="Info.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Info.Designer.cs">
       <DependentUpon>Info.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MousePickWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MousePickWindow.Designer.cs">
+      <DependentUpon>MousePickWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MousePickWindowName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MousePickWindowName.Designer.cs">
+      <DependentUpon>MousePickWindowName.cs</DependentUpon>
     </Compile>
     <Compile Include="Option.cs">
       <SubType>Form</SubType>
@@ -91,6 +103,12 @@
     <EmbeddedResource Include="Info.resx">
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MousePickWindow.resx">
+      <DependentUpon>MousePickWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MousePickWindowName.resx">
+      <DependentUpon>MousePickWindowName.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Option.resx">
       <DependentUpon>Option.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,6 +126,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -242,6 +261,11 @@
     <None Include="bin\Debug\taskmanager.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\Langrisser_Village.png" />
+    <None Include="Properties\Langrisser_skip.png" />
+    <None Include="Properties\Langrisser_Skill.png" />
+    <None Include="Properties\Langrisser_Battle.png" />
+    <None Include="Properties\Langrisser_Attack.png" />
     <None Include="Properties\skill.png" />
     <None Include="Properties\ok_cancel.png" />
     <None Include="Properties\Speaker.png" />

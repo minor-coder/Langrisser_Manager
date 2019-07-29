@@ -38,21 +38,55 @@ namespace TaskManager
         public int Top;
         public int Right;
         public int Bottom;
+
+        public Rect(int _Left, int _Top, int _Right, int _Bottom)
+        {
+            Left = _Left;
+            Top = _Top;
+            Right = _Right;
+            Bottom = _Bottom;
+        }
+
+        public static Rect operator+(Rect rect, int value)
+        {
+            return new Rect(rect.Left + value, rect.Top + value, rect.Right + value, rect.Bottom + value);
+        }
     }
 
     public struct UILocation
     {
-        public enum Direction { LT, RT, LB, RB };
+        public enum Direction { LT, CT, RT, LC, CENTER, RC, LB, CB, RB };
 
+        public bool isUsing { get; set; }
+        public string name { get; set; }
+        public Keys key { get; set; }
         public int x;
         public int y;
         public Direction dir;
+
+        public override string ToString()
+        {
+            return name;
+        }
 
         public UILocation(int _x, int _y, Direction _dir)
         {
             x = _x;
             y = _y;
             dir = _dir;
+            name = "";
+            key = Keys.None;
+            isUsing = true;
+        }
+
+        public UILocation(int _x, int _y, Direction _dir, string _name, Keys _key)
+        {
+            x = _x;
+            y = _y;
+            dir = _dir;
+            name = _name;
+            key = _key;
+            isUsing = true;
         }
     }
 }

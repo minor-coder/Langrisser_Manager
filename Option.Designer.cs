@@ -55,9 +55,21 @@
             this.textBox_wait = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.button_manualAdd = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.checkBox_advanced = new System.Windows.Forms.CheckBox();
+            this.button_shortcutDelete = new System.Windows.Forms.Button();
+            this.dataGridView_manual = new System.Windows.Forms.DataGridView();
+            this.pictureBox_preview = new System.Windows.Forms.PictureBox();
+            this.comboBox_preview = new System.Windows.Forms.ComboBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox_HotKey.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_manual)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_preview)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_Save
@@ -249,7 +261,7 @@
             // 
             this.pictureBox2.BackgroundImage = global::TaskManager.Properties.Resources.ok_cancel;
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox2.Location = new System.Drawing.Point(309, 126);
+            this.pictureBox2.Location = new System.Drawing.Point(309, 84);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(239, 106);
             this.pictureBox2.TabIndex = 15;
@@ -257,7 +269,7 @@
             // 
             // textBox_cancel
             // 
-            this.textBox_cancel.Location = new System.Drawing.Point(339, 195);
+            this.textBox_cancel.Location = new System.Drawing.Point(339, 153);
             this.textBox_cancel.Name = "textBox_cancel";
             this.textBox_cancel.ReadOnly = true;
             this.textBox_cancel.Size = new System.Drawing.Size(46, 21);
@@ -268,7 +280,7 @@
             // 
             // textBox_ok
             // 
-            this.textBox_ok.Location = new System.Drawing.Point(472, 195);
+            this.textBox_ok.Location = new System.Drawing.Point(472, 153);
             this.textBox_ok.Name = "textBox_ok";
             this.textBox_ok.ReadOnly = true;
             this.textBox_ok.Size = new System.Drawing.Size(46, 21);
@@ -324,7 +336,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(312, 105);
+            this.label7.Location = new System.Drawing.Point(312, 63);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(85, 12);
             this.label7.TabIndex = 22;
@@ -339,12 +351,115 @@
             this.label8.TabIndex = 23;
             this.label8.Text = "스킬 버튼";
             // 
+            // button_manualAdd
+            // 
+            this.button_manualAdd.Location = new System.Drawing.Point(185, 15);
+            this.button_manualAdd.Name = "button_manualAdd";
+            this.button_manualAdd.Size = new System.Drawing.Size(75, 23);
+            this.button_manualAdd.TabIndex = 24;
+            this.button_manualAdd.Text = "추가";
+            this.button_manualAdd.UseVisualStyleBackColor = true;
+            this.button_manualAdd.Click += new System.EventHandler(this.button_manualAdd_Click);
+            // 
+            // label9
+            // 
+            this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label9.Location = new System.Drawing.Point(12, 264);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(804, 2);
+            this.label9.TabIndex = 26;
+            // 
+            // checkBox_advanced
+            // 
+            this.checkBox_advanced.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox_advanced.Location = new System.Drawing.Point(309, 222);
+            this.checkBox_advanced.Name = "checkBox_advanced";
+            this.checkBox_advanced.Size = new System.Drawing.Size(75, 23);
+            this.checkBox_advanced.TabIndex = 27;
+            this.checkBox_advanced.Text = "고급옵션";
+            this.checkBox_advanced.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox_advanced.UseVisualStyleBackColor = true;
+            this.checkBox_advanced.CheckedChanged += new System.EventHandler(this.checkBox_advanced_CheckedChanged);
+            // 
+            // button_shortcutDelete
+            // 
+            this.button_shortcutDelete.Location = new System.Drawing.Point(273, 15);
+            this.button_shortcutDelete.Name = "button_shortcutDelete";
+            this.button_shortcutDelete.Size = new System.Drawing.Size(75, 23);
+            this.button_shortcutDelete.TabIndex = 28;
+            this.button_shortcutDelete.Text = "제거";
+            this.button_shortcutDelete.UseVisualStyleBackColor = true;
+            this.button_shortcutDelete.Click += new System.EventHandler(this.button_shortcutDelete_Click);
+            // 
+            // dataGridView_manual
+            // 
+            this.dataGridView_manual.AllowUserToAddRows = false;
+            this.dataGridView_manual.AllowUserToDeleteRows = false;
+            this.dataGridView_manual.AllowUserToResizeColumns = false;
+            this.dataGridView_manual.AllowUserToResizeRows = false;
+            this.dataGridView_manual.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_manual.Location = new System.Drawing.Point(10, 44);
+            this.dataGridView_manual.MultiSelect = false;
+            this.dataGridView_manual.Name = "dataGridView_manual";
+            this.dataGridView_manual.RowTemplate.Height = 23;
+            this.dataGridView_manual.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView_manual.Size = new System.Drawing.Size(344, 216);
+            this.dataGridView_manual.TabIndex = 29;
+            this.dataGridView_manual.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_manual_CellClick);
+            this.dataGridView_manual.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_manual_CellContentClick);
+            // 
+            // pictureBox_preview
+            // 
+            this.pictureBox_preview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox_preview.Location = new System.Drawing.Point(407, 44);
+            this.pictureBox_preview.Name = "pictureBox_preview";
+            this.pictureBox_preview.Size = new System.Drawing.Size(384, 216);
+            this.pictureBox_preview.TabIndex = 30;
+            this.pictureBox_preview.TabStop = false;
+            // 
+            // comboBox_preview
+            // 
+            this.comboBox_preview.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_preview.FormattingEnabled = true;
+            this.comboBox_preview.Location = new System.Drawing.Point(670, 20);
+            this.comboBox_preview.Name = "comboBox_preview";
+            this.comboBox_preview.Size = new System.Drawing.Size(121, 20);
+            this.comboBox_preview.TabIndex = 31;
+            this.comboBox_preview.SelectedIndexChanged += new System.EventHandler(this.comboBox_preview_SelectedIndexChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.pictureBox_preview);
+            this.groupBox1.Controls.Add(this.comboBox_preview);
+            this.groupBox1.Controls.Add(this.dataGridView_manual);
+            this.groupBox1.Controls.Add(this.button_shortcutDelete);
+            this.groupBox1.Controls.Add(this.button_manualAdd);
+            this.groupBox1.Location = new System.Drawing.Point(12, 272);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(804, 268);
+            this.groupBox1.TabIndex = 32;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "사용자 지정 단축키";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(583, 23);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(81, 12);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "미리보기 화면";
+            // 
             // Option
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(828, 259);
+            this.ClientSize = new System.Drawing.Size(828, 544);
             this.ControlBox = false;
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.checkBox_advanced);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBox_wait);
@@ -368,6 +483,10 @@
             this.groupBox_HotKey.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_manual)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_preview)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -401,5 +520,14 @@
         private System.Windows.Forms.TextBox textBox_wait;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button_manualAdd;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox checkBox_advanced;
+        private System.Windows.Forms.Button button_shortcutDelete;
+        private System.Windows.Forms.DataGridView dataGridView_manual;
+        private System.Windows.Forms.PictureBox pictureBox_preview;
+        private System.Windows.Forms.ComboBox comboBox_preview;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label10;
     }
 }

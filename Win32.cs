@@ -24,13 +24,48 @@ namespace TaskManager
         private static extern int SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rectangle rect);
+        public static extern IntPtr GetWindowRect(IntPtr hWnd, out Rect rect);
 
         [DllImport("user32.dll")]
         public static extern bool GetClientRect(IntPtr hWnd, out Rect rect);
 
+        [DllImport("gdi32.dll")]
+        public static extern bool BitBlt(IntPtr hObject, int nXDest, int nYDest,
+            int nWidth, int nHeight, IntPtr hObjectSource,
+            int nXSrc, int nYSrc, int dwRop);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleBitmap(IntPtr hDC, int nWidth, int nHeight);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteDC(IntPtr hDC);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr SelectObject(IntPtr hDC, IntPtr hObject);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int width, int height, uint uFlags);
+
         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, out Point lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern bool AdjustWindowRectEx(ref Rect lpRect, uint dwStyle, bool bMenu, uint dwExStyle);
 
         [DllImport("user32.dll")]
         public static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
@@ -67,6 +102,8 @@ namespace TaskManager
 
         public const int SW_HIDE = 0;
         public const int SW_SHOW = 5;
+        public const int SW_RESTORE = 9;
+        public const int SW_SHOWNORMAL = 1;
 
         public const int WH_MOUSE_LL = 14;
         public const int WM_HOTKEY = 0x0312;
@@ -76,5 +113,13 @@ namespace TaskManager
         public const int KE_DOWN = 0;
         public const int KE_EXTENDEDKEY = 1;
         public const int KE_UP = 2;
+
+        public const int SWP_NOZORDER = 0x0004;
+        public const int SWP_NOACTIVATE = 0x0010;
+        public const int SWP_SHOWWINDOW = 0x0040;
+
+        public const int WS_OVERLAPPEDWINDOW = 0x00CF0000;
+
+        public const int SRCCOPY = 0x00CC0020;
     }
 }
